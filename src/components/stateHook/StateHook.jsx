@@ -8,12 +8,30 @@ const Modal = () => {
  );
 };
 
-const UpdateModal = ({ openUpdateModal }) => {
- const { name } = openUpdateModal;
+const UpdateModal = ({ openUpdateModal, setOpenUpdateModal }) => {
+ const [updateField, setUpdateField] = useState(openUpdateModal.name);
+
+ console.log("update field", updateField);
+ console.log("openUpdateModal", openUpdateModal);
+
+ const handleUpdate = (e) => {
+  e.preventDefault();
+  openUpdateModal.name = updateField;
+  const data = (openUpdateModal.name = updateField);
+  setOpenUpdateModal(data);
+ };
  return (
   <div>
-   <form>
-    <input className="border" type="text" value={name} />
+   <form onSubmit={handleUpdate}>
+    <input
+     onChange={(e) => setUpdateField(e.target.value)}
+     className="border"
+     type="text"
+     value={updateField}
+    />
+    <button className="border bg-yellow-100" type="submit">
+     Update
+    </button>
    </form>
   </div>
  );
@@ -30,7 +48,7 @@ const StateHook = () => {
  const [inputTask, setInputTask] = useState("");
  const [openModal, setOpenModal] = useState(false);
  const [deleteText, setDeleteText] = useState(false);
- const [openUpdateModal, setUpdateModal] = useState(false);
+ const [openUpdateModal, setOpenUpdateModal] = useState(null);
 
  //  console.log(showTask);
 
@@ -53,8 +71,8 @@ const StateHook = () => {
  };
 
  const handleDelete = (id) => {
-  const edit = showTask.filter((d) => d.id !== id);
-  setShowTask(edit);
+  const deleteItem = showTask.filter((d) => d.id !== id);
+  setShowTask(deleteItem);
   setDeleteText(true);
   setTimeout(() => {
    setDeleteText(false);
@@ -63,7 +81,7 @@ const StateHook = () => {
  };
 
  const handleUpdate = (id) => {
-  return setUpdateModal(showTask.find((u) => u.id === id));
+  return setOpenUpdateModal(showTask.find((u) => u.id === id));
  };
  console.log(openUpdateModal);
 
@@ -82,7 +100,12 @@ const StateHook = () => {
    </form>
    {openModal && <p>Success fully added</p>}
    {deleteText && <Modal />}
-   {openUpdateModal && <UpdateModal openUpdateModal={openUpdateModal} />}
+   {openUpdateModal && (
+    <UpdateModal
+     openUpdateModal={openUpdateModal}
+     setOpenUpdateModal={setOpenUpdateModal}
+    />
+   )}
 
    {showTask.map((task) => {
     const { id, name } = task;
